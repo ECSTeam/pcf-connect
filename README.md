@@ -1,4 +1,4 @@
-# PCF Connect (`pcf` for now)
+# Description
 
 `pcf` is a command line utility used to easily switch between PCF environments.
 
@@ -15,23 +15,23 @@ This script assumes that the following command line utilities are already instal
 
 ## Help
 
-`pcf help`
+### `pcf help`
 
 You can always get help by typing `pcf help`. It will list out all the available commands you can use.
 
 ## Targets
 
-`pcf targets`
+### `pcf targets`
 
 Displays a list of all available aliases that have been set up. The list reflect the contents of the `$HOME/.pcf/targets.json` file.
 
 ## Target
 
-`pcf target`
+### `pcf target`
 
 Display the current PCF environment target. Note that this command could reflect the wrong environment if you have run `bosh target`, `cf target`, or `uaac target` separately. When in doubt you should rerun `pcf target <alias>`.
 
-`pcf target <alias>`
+### `pcf target <alias>`
 
 Target a specific PCF environment whose name is `<alias>`. This will perform the following tasks:
 
@@ -46,7 +46,7 @@ After running this command you are able to run appropriate `cf`, `bosh`, and `ua
 
 ## Alias
 
-`pcf alias [options]`
+### `pcf alias [options]`
 
 Create an alias for a specific PCF environment. The following options are available:
 
@@ -60,11 +60,9 @@ If Ops manager host, user, or password is omitted you will be prompted to enter 
 
 This command will only go so far as validating the connection to Ops Manager. Connections to bosh director, cloud controller, and UAA occur when executing `pcf target <alias>`.
 
-Example:
+Example:  `pcf alias -n 172.28.21.5 -u admin -p welcome -o system -s p-spring-cloud-services`
 
-  `pcf alias -n 172.28.21.5 -u admin -p welcome -o system -s p-spring-cloud-services`
-
-`pcf alias`
+### `pcf alias`
 
 This will display help for the `alias` command with a description of all the options.
 
