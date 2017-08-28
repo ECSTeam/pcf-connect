@@ -4,8 +4,6 @@
 # ops man host, username, and password.
 #
 # Authors:  Winston Rast, Michael Menges
-#
-# Copyright 2017, CGI Technology & Solutions Inc.
 
 function usage() {
 cat <<EOF
