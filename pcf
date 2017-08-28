@@ -1,0 +1,283 @@
+#!/bin/bash
+
+# This script will connect to a specific PCF environment given only the
+# ops man host, username, and password.
+#
+# Authors:  Winston Rast, Michael Menges
+#
+# Copyright 2017, CGI Technology & Solutions Inc.
+
+function usage() {
+cat <<EOF
+USAGE:
+   pcf <command> [<options>]
+
+COMMANDS <command>:
+   alias:    Define an alias for a PCF environment
+   help:     Display this help screen
+   targets:  Show list of all available target aliases
+   target:   Show current target or target a PCF environment
+
+EOF
+}
+
+function usageAlias() {
+cat <<EOF
+NAME:
+   alias - define an alias for a PCF environment
+
+USAGE:
+   pcf alias NAME [-n OPSMAN_HOST] [-u OPSMAN_USERNAME] [-p OPSMAN_PASSWORD] [-o ORG] [-s SPACE]
+
+EXAMPLE:
+   pcf alias lab2 -n 172.28.21.5 -u admin -p welcome1 -o my_org -s my_space
+
+OPTIONS:
+   -n,--hostname     Ops Manager host name or IP address, prompt if not specified
+   -u,--username     Ops Manager admin username, prompt if not specified
+   -p,--password     Ops Manager admin password, prompt if not specified
+   -o,--org          CF organization, default 'system'
+   -s,--space        CF space, default 'system'
+EOF
+}
+
+function curlit () {
+	opsman_endpoint="https://$host/$1"
+	# echo "Connecting to $opsman_endpoint"
+  curl_response=`curl -k -s $opsman_endpoint -X GET -H "Authorization: Bearer $ACCESS_TOKEN"`
+  if [ -z "$curl_response" ]; then
+    echo "No reponse from curl: $1."
+    exit 1
+  else
+		echo $curl_response
+  fi
+}
+
+function opsMgrConnect () {
+  ACCESS_TOKEN=`curl -s -k -d"username=$user&password=$password&client_id=$client&grant_type=password" -u "$client:" https://$host/uaa/oauth/token | jq -r '.access_token'`
+}
+
+function deployedProducts () {
+  products=`curlit api/v0/deployed/products`
+}
+
+# requires $org and $space already set
+function cfLogin () {
+  cf_guid=`echo $products | jq -r '.[] | select(.type == "cf") | .guid'`
+  cf_creds=`curlit api/v0/deployed/products/$cf_guid/credentials/.uaa.admin_credentials`
+	cf_user=`echo $cf_creds | jq -r '.credential.value.identity'`
+	cf_pass=`echo $cf_creds | jq -r '.credential.value.password'`
+
+	# figure out the CF API
+	cf_props=`curlit api/v0/staged/products/$cf_guid/properties`
+	cf_system_domain=`echo $cf_props | jq -r '.properties[".cloud_controller.system_domain"].value'`
+	cf_api="https://api.$cf_system_domain"
+
+	cf login -a $cf_api -u $cf_user -p $cf_pass -o $org -s $space --skip-ssl-validation
+}
+
+function boshConnect () {
+  alias_dir=$HOME/.pcf/$alias
+  mkdir -p $alias_dir
+  ca_cert=`curlit api/v0/security/root_ca_certificate | jq '.root_ca_certificate_pem'`
+  echo $ca_cert > $alias_dir/root_ca_certificate
+
+# WARNING: spacing critical here - do not indent 2nd line
+  sed -i '' 's/\\n/\
+/g' $alias_dir/root_ca_certificate
+
+  # remove double-quotes
+  sed -i '' 's/"//g' $alias_dir/root_ca_certificate
+
+  boshGuid=`echo $products | jq -r '.[] | select(.type == "p-bosh") | .guid'`
+  director_ip=`curlit api/v0/deployed/products/$boshGuid/static_ips | jq -r '.[] | .ips[0]'`
+  director_pw=`curlit api/v0/deployed/director/credentials/director_credentials | jq -r '.credential.value.password'`
+
+  bosh --ca-cert $alias_dir/root_ca_certificate target https://$director_ip:25555 <<EOF
+director
+$director_pw
+EOF
+}
+
+function boshDeployments () {
+  bosh_deployments_dir=$alias_dir/deployments
+  mkdir -p $bosh_deployments_dir
+
+  guids=`echo $products | jq -r '.[] | .guid'`
+  for i in $guids; do
+    if [[ $i != p-bosh* ]]; then
+      # this will overwrite!
+      bosh download manifest $i > $bosh_deployments_dir/$i
+    fi
+  done
+
+  # target the cf deployment by default - cf_guid was retrieved earlier
+  bosh deployment $bosh_deployments_dir/$cf_guid
+}
+
+function cfUAAConnect () {
+  # CF_GUID=`curlit api/v0/deployed/products | jq -r '.[] | select(.type == "cf") | .guid'`
+  client_secret=`curlit api/v0/deployed/products/$cf_guid/credentials/.uaa.admin_client_credentials | jq -r '.credential.value.password'`
+  uaa_url="https://uaa.$cf_system_domain"
+  uaac target $uaa_url --skip-ssl-validation
+  uaac token client get admin -s $client_secret
+}
+
+function handleHelp() {
+	usage
+}
+
+function handleTargets() {
+	if [[ -f $config_file ]]; then
+		aliases=`echo "$(cat $config_file)" | jq '.targets[] | .alias'`
+
+    echo "Available environments. Use 'pcf target <alias>' to target an environment."
+    echo ""
+    echo -e "Alias\t\tOps Mgr Host"
+    echo -e "-----\t\t------------"
+    for i in $aliases; do
+      # alias=$i
+      alias=`echo $i | sed -e 's/^"//' -e 's/"$//'`
+      host=`echo "$(cat $config_file)" | jq --arg n $alias '.targets[] | select(.alias == $n) | .host'`
+      cleanHost=`echo $host | sed -e 's/^"//' -e 's/"$//'`
+      echo -e "$alias\t\t$cleanHost"
+    done
+	else
+		echo "No targets. Use 'pcf alias [options]' to create one."
+	fi
+}
+
+function handleTarget() {
+	alias="$1"
+
+	if [[ -z $alias ]]; then
+		# display current target
+    target=`echo "$(cat $config_file)" | jq '.targets[] | select(.current == true)'`
+    host=`echo $target | jq -r '.host'`
+    alias=`echo $target | jq -r '.alias'`
+
+    echo "Current target: $alias ($host)"
+	else
+    if [[ ! -f $config_file ]]; then
+      echo "ERROR: target '$alias' does not exist. Use 'pcf targets' for available targets."
+      exit 1
+    fi
+
+    target=`echo "$(cat $config_file)" | jq --arg n $alias -r '.targets[] | select(.alias == $n)'`
+    if [[ -z $target ]]; then
+      echo "ERROR: target '$alias' does not exist. Use 'pcf targets' for available targets."
+      exit 1
+    fi
+
+    # set current target to alias
+    echo "Targeting '$alias' environment."
+
+    host=`echo $target | jq -r '.host'`
+    user=`echo $target | jq -r '.user'`
+    password=`echo $target | jq -r '.password'`
+    org=`echo $target | jq -r '.org'`
+    space=`echo $target | jq -r '.space'`
+
+		opsMgrConnect
+    deployedProducts
+		cfLogin
+    boshConnect
+    boshDeployments
+    cfUAAConnect
+
+    # update the 'current' flag
+    newJson=`echo "$(cat $config_file)" | jq --arg n $alias '(.targets[] | select(.alias == $n)).current = true | (.targets[] | select(.alias != $n)).current = false'`
+    echo "$newJson" > $config_file
+	fi
+}
+
+function handleAlias() {
+	name="$1"
+
+  if [[ -z $name ]]; then
+  	usageAlias
+		exit 1
+  fi
+
+	org="system"
+	space="system"
+
+	shift
+	while [[ $# -gt 0 ]]; do
+			key="$1"
+	    case "$key" in
+	        -n|--hostname)
+					shift
+	        host="$1"
+	        ;;
+	        -u|--username)
+					shift
+	        user="$1"
+	        ;;
+					-p|--password)
+	        shift
+	        password="$1"
+	        ;;
+					-o|--org)
+	        shift
+	        org="$1"
+	        ;;
+					-s|--space)
+	        shift
+	        space="$1"
+	        ;;
+	    esac
+	    # Shift after checking all the cases to get the next option
+	    shift
+	done
+
+  # prompt for anything missing from command line
+	while [[ -z $host ]]; do
+		read -p "Ops Manager host: " host
+	done
+	while [[ -z $user ]]; do
+		read -p "Ops Manager admin username: " user
+	done
+	while [[ -z $password ]]; do
+		read -p "Ops Manager admin password: " password
+	done
+
+	# validate this environment before creating an alias
+	opsMgrConnect
+
+	# json=`aliasJson $name $host $user $password $org $space`
+
+	if [[ ! -f $config_file ]]; then
+		mkdir -p $HOME/.pcf
+    echo -e "{\n  \"targets\" : []\n}" > $config_file
+	fi
+
+	currentJson=`cat $config_file`
+  newJson=`echo "$currentJson" | jq --arg n $name --arg h $host --arg u $user --arg p $password --arg o $org --arg s $space '.targets[.targets| length] |= . + { "alias": $n, "host": $h, "user": $u, "password": $p, "org": $o, "space": $s, "current": false }'`
+
+	echo "$newJson" > $config_file
+
+	# echo "$(cat $config_file)"
+	echo "Success! Use 'pcf target $name' to target this environment."
+}
+
+###
+### Run script
+###
+
+client=opsman
+config_file=$HOME/.pcf/targets.json
+
+command="$1"
+
+if [ -z $command ] || [ $command == "help" ]; then
+	handleHelp
+	exit 1
+elif [ $command == "targets" ]; then
+	handleTargets
+elif [ $command == "target" ]; then
+	handleTarget "$2"
+elif [ $command == "alias" ]; then
+	shift
+	handleAlias "$@"
+fi
