@@ -12,8 +12,8 @@ inputs:
 run:
   path: pcf-repo/ci/test-pcf.sh
   params:
-    OPSMAN_HOST: ((opsman_host))
-    OPSMAN_USERNAME: ((opsman_username))
-    OPSMAN_PASSWORD: ((opsman_password))
-    CF_ORG: ((cf_org))
-    CF_SPACE: ((cf_space))
+    OPSMAN_HOST:
+    OPSMAN_USERNAME:
+    OPSMAN_PASSWORD:
+    CF_ORG:
+    CF_SPACE:
