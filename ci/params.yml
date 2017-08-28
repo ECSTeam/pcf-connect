@@ -1,0 +1,7 @@
+github_token:      # token from github
+
+opsman_host:       # ops manager host ip
+opsman_username:   # ops manager admin username
+opsman_password:   # ops manager admin user's password
+cf_org:            # CF organization to log into
+cf_space:          # CF space to log into

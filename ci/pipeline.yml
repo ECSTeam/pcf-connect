@@ -1,0 +1,22 @@
+---
+resources:
+- name: pcf-repo
+  type: git
+  source:
+    uri: https://github.com/ECSTeam/pcf
+    branch: master
+    access_token: ((github_token))
+
+jobs:
+- name: test-pcf
+  plan:
+  - get: pcf-repo
+    trigger: true
+  - task: test-pcf
+    file: pcf-repo/ci/test-pcf.yml
+    params:
+      OPSMAN_HOST: ((opsman_host))
+      OPSMAN_USERNAME: ((opsman_username))
+      OPSMAN_PASSWORD: ((opsman_password))
+      CF_ORG: ((cf_org))
+      CF_SPACE: ((cf_space))
