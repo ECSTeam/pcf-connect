@@ -9,13 +9,15 @@
 # apt-get -y install ruby-full
 
 # BOSH
-# echo "installing bosh"
-# gem install bosh_cli --no-ri --no-rdoc
+echo "installing bosh"
+gem install bosh_cli --no-ri --no-rdoc
 
-curl -L "https://cli.run.pivotal.io/stable?release=linux64-binary" | tar -zx -C /usr/local/bin
-# curl -L 'https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64' -o /usr/local/bin/jq && chmod +x /usr/local/bin/jq
+# gem install apk
 
 # CF
+gem install curl
+curl -L "https://cli.run.pivotal.io/stable?release=linux64-binary" | tar -zx -C /usr/local/bin
+
 # echo "installing cf"
 # wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | apt-key add -
 # echo "deb http://packages.cloudfoundry.org/debian stable main" | tee /etc/apt/sources.list.d/cloudfoundry-cli.list
@@ -26,9 +28,10 @@ curl -L "https://cli.run.pivotal.io/stable?release=linux64-binary" | tar -zx -C 
 echo "installing uaac"
 gem install cf-uaac
 
-jq
+# jq
 echo "installing jq"
-apt-get install jq
+curl -L 'https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64' -o /usr/local/bin/jq && chmod +x /usr/local/bin/jq
+# apt-get install jq
 
 # Do something useful
 
