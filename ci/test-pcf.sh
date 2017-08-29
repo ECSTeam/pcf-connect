@@ -6,7 +6,7 @@
 # apt-get install sudo
 
 echo "install ruby"
-apt-get install ruby-full
+apt-get -y install ruby-full
 
 # BOSH
 echo "installing bosh"
@@ -17,7 +17,7 @@ echo "installing cf"
 wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
 echo "deb http://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
 apt-get update
-apt-get install cf-cli
+apt-get -y install cf-cli
 
 # UAAC
 echo "installing uaac"
