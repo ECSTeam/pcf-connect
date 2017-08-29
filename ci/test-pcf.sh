@@ -2,11 +2,11 @@
 
 # get "pcf" script required command line utilities
 
-echo "installing sudo"
-apt-get install sudo
-
-echo "install ruby"
-sudo apt-get install ruby-full
+# echo "installing sudo"
+# apt-get install sudo
+#
+# echo "install ruby"
+# sudo apt-get install ruby-full
 
 # BOSH
 echo "installing bosh"
