@@ -80,9 +80,23 @@ function boshConnect () {
   ca_cert=`curlit api/v0/security/root_ca_certificate | jq '.root_ca_certificate_pem'`
   echo $ca_cert > $alias_dir/root_ca_certificate
 
-# WARNING: spacing critical here - do not indent 2nd line
-  sed -i '' 's/\\n/\
+  unameOut="$(uname -s)"
+  case "${unameOut}" in
+      Linux*)     machine=Linux;;
+      Darwin*)    machine=Mac;;
+      # CYGWIN*)    machine=Cygwin;;
+      # MINGW*)     machine=MinGw;;
+      *)          machine="UNKNOWN:${unameOut}"
+  esac
+  echo ${machine}
+
+  if [[ "${machine}" == "Mac" ]]; then
+    # WARNING: spacing critical here - do not indent 2nd line
+    sed -i '' 's/\\n/\
 /g' $alias_dir/root_ca_certificate
+  else
+    sed -i '' 's/\\n/\n/g' $alias_dir/root_ca_certificate
+  fi
 
   # remove double-quotes
   sed -i '' 's/"//g' $alias_dir/root_ca_certificate

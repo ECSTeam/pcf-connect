@@ -8,6 +8,10 @@
 # echo "install ruby"
 # apt-get -y install ruby-full
 
+# for debugging
+apt-get update
+apt-get install vim
+
 # BOSH
 echo "installing bosh"
 gem install bosh_cli --no-ri --no-rdoc
