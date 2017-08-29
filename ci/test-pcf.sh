@@ -2,9 +2,11 @@
 
 # get "pcf" script required command line utilities
 
-echo "installing bosh"
+echo "install ruby"
+sudo apt-get install ruby-full
 
 # BOSH
+echo "installing bosh"
 gem install bosh_cli --no-ri --no-rdoc
 
 # CF
