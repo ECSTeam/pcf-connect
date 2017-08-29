@@ -10,7 +10,7 @@
 
 # for debugging
 apt-get update
-apt-get install vim
+apt-get -y install vim
 
 # BOSH
 echo "installing bosh"
