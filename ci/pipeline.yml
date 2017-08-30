@@ -3,7 +3,7 @@ resources:
 - name: pcf-repo
   type: git
   source:
-    uri: https://github.com/ECSTeam/pcf
+    uri: https://github.com/ECSTeam/pcf-connect
     branch: master
     access_token: {{github_token}}
 
