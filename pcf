@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # This script will connect to a specific PCF environment given only the
 # ops man host, username, and password.
