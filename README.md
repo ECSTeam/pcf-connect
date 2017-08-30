@@ -10,16 +10,34 @@ This script assumes that the following command line utilities are already instal
 
 - `jq`
 - `cf`
-- `bosh`
+- `bosh` (version 1.x)
 - `uaac`
+
+# Installation
+
+You don't need to `git clone` this entire repository. All that's needed is the `pcf` script itself.
+
+Place the `pcf` script file somewhere on your `$PATH` and you're good to go.
 
 # How To Use
 
-## Help
+## Alias
 
-### `pcf help`
+### `pcf alias [options]`
 
-You can always get help by typing `pcf help`. It will list out all the available commands you can use.
+Create an alias for a specific PCF environment. The following options are available:
+
+- `-n,--hostname OPSMAN_HOST`: Ops manager host or IP address
+- `-u,--username OPSMAN_USER`: Ops manager admin username
+- `-p,--password OPSMAN_PASSWORD`: Ops manager admin user's password
+- `-o,--org CF_ORG`: Organization to log into with `cf login`. Defaults to `system`.
+- `-s,--space CF_SPACE`: Space to log into with `cf login`. Defaults to `system`.
+
+If Ops manager host, user, or password is omitted you will be prompted to enter it.
+
+This command will only go so far as validating the connection to Ops Manager. Connections to bosh director, cloud controller, and UAA occur when executing `pcf target <alias>`.
+
+Example:  `pcf alias -n 172.28.21.5 -u admin -p welcome -o system -s p-spring-cloud-services`
 
 ## Targets
 
@@ -46,23 +64,11 @@ Target a specific PCF environment whose name is `<alias>`. This will perform the
 
 After running this command you are able to run appropriate `cf`, `bosh`, and `uaac` commands for that PCF environment.
 
-## Alias
+## Help
 
-### `pcf alias [options]`
+### `pcf help`
 
-Create an alias for a specific PCF environment. The following options are available:
-
-- `-n,--hostname OPSMAN_HOST`: Ops manager host or IP address
-- `-u,--username OPSMAN_USER`: Ops manager admin username
-- `-p,--password OPSMAN_PASSWORD`: Ops manager admin user's password
-- `-o,--org CF_ORG`: Organization to log into with `cf login`. Defaults to `system`.
-- `-s,--space CF_SPACE`: Space to log into with `cf login`. Defaults to `system`.
-
-If Ops manager host, user, or password is omitted you will be prompted to enter it.
-
-This command will only go so far as validating the connection to Ops Manager. Connections to bosh director, cloud controller, and UAA occur when executing `pcf target <alias>`.
-
-Example:  `pcf alias -n 172.28.21.5 -u admin -p welcome -o system -s p-spring-cloud-services`
+You can always get help by typing `pcf help`. It will list out all the available commands you can use.
 
 ### `pcf alias`
 
@@ -81,6 +87,7 @@ All state associated with this script is stored in `$HOME/.pcf`. The contents of
 
 - Don't store ops man admin password in plain text in `$HOME/.pcf/targets.json`
 - Vault support
+- Use bosh v2
 - More options
   - auto-target newly created alias
   - `cf login` as non-admin user
