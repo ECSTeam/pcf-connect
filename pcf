@@ -94,12 +94,13 @@ function boshConnect () {
     # WARNING: spacing critical here - do not indent 2nd line
     sed -i '' 's/\\n/\
 /g' $alias_dir/root_ca_certificate
+    sed -i '' 's/"//g' $alias_dir/root_ca_certificate
   else
-    sed -i '' 's/\\n/\n/g' $alias_dir/root_ca_certificate
+    sed -i 's/\\n/\n/g' $alias_dir/root_ca_certificate
+    sed -i 's/"//g' $alias_dir/root_ca_certificate
   fi
 
   # remove double-quotes
-  sed -i '' 's/"//g' $alias_dir/root_ca_certificate
 
   boshGuid=`echo $products | jq -r '.[] | select(.type == "p-bosh") | .guid'`
   director_ip=`curlit api/v0/deployed/products/$boshGuid/static_ips | jq -r '.[] | .ips[0]'`
