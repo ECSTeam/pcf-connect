@@ -2,7 +2,7 @@
 
 `pcf` is a command line utility used to easily switch between PCF environments.
 
-This script developed and tested on Mac OS X.
+This script should function on both Mac OS X and Linux environments.
 
 # Prerequisites
 
