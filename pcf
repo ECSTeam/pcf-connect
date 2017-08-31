@@ -106,10 +106,19 @@ function boshConnect () {
   director_ip=`curlit api/v0/deployed/products/$boshGuid/static_ips | jq -r '.[] | .ips[0]'`
   director_pw=`curlit api/v0/deployed/director/credentials/director_credentials | jq -r '.credential.value.password'`
 
-  bosh --ca-cert $alias_dir/root_ca_certificate target https://$director_ip:25555 <<EOF
+  # target bosh director using proper bosh cli commands
+  if [[ $boshVersion == 2.* ]]; then
+    bosh alias-env $alias -e $director_ip --ca-cert $alias_dir/root_ca_certificate
+    bosh -e $alias log-in <<EOF
 director
 $director_pw
 EOF
+  else
+    bosh --ca-cert $alias_dir/root_ca_certificate target https://$director_ip:25555 <<EOF
+director
+$director_pw
+EOF
+  fi
 }
 
 function boshDeployments () {
@@ -120,12 +129,19 @@ function boshDeployments () {
   for i in $guids; do
     if [[ $i != p-bosh* ]]; then
       # this will overwrite!
-      bosh download manifest $i > $bosh_deployments_dir/$i
+      if [[ $boshVersion == 2.* ]]; then
+        bosh -e $alias -d $i man > $bosh_deployments_dir/$i
+      else
+        bosh download manifest $i > $bosh_deployments_dir/$i
+      fi
     fi
   done
 
   # target the cf deployment by default - cf_guid was retrieved earlier
-  bosh deployment $bosh_deployments_dir/$cf_guid
+  # only necessary using bosh v1
+  if [[ $boshVersion != 2.* ]]; then
+    bosh deployment $bosh_deployments_dir/$cf_guid
+  fi
 }
 
 function cfUAAConnect () {
@@ -277,6 +293,8 @@ function handleAlias() {
 ###
 ### Run script
 ###
+
+boshVersion=`bosh -v | cut -d " " -f 2`
 
 client=opsman
 config_file=$HOME/.pcf/targets.json

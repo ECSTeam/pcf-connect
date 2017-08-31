@@ -10,7 +10,7 @@ This script assumes that the following command line utilities are already instal
 
 - `jq`
 - `cf`
-- `bosh` (version 1.x)
+- `bosh` (v1 or v2)
 - `uaac`
 
 # Installation
@@ -37,7 +37,7 @@ If Ops manager host, user, or password is omitted you will be prompted to enter 
 
 This command will only go so far as validating the connection to Ops Manager. Connections to bosh director, cloud controller, and UAA occur when executing `pcf target <alias>`.
 
-Example:  `pcf alias -n 172.28.21.5 -u admin -p welcome -o system -s p-spring-cloud-services`
+Example:  `pcf alias -n 172.28.21.5 -u admin -p welcome -o system -s system`
 
 ## Targets
 
@@ -63,6 +63,8 @@ Target a specific PCF environment whose name is `<alias>`. This will perform the
 - Get the admin client token from the UAA server
 
 After running this command you are able to run appropriate `cf`, `bosh`, and `uaac` commands for that PCF environment.
+
+NOTE:  `pcf` will use whatever version of the Bosh CLI `bosh -v` returns.
 
 ## Help
 

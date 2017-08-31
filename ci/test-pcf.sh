@@ -21,7 +21,21 @@ curl -s -L 'https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64' 
 
 # Do something useful
 
-echo "running tests"
+echo "running tests using bosh v1"
+cmd=./pcf-repo/pcf
+
+$cmd alias test-name -n $OPSMAN_HOST -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD -o $CF_ORG -s $CF_SPACE
+$cmd target test-name
+$cmd targets
+
+# clean up
+
+rm -rf $HOME/.pcf
+gem uninstall bosh_cli
+
+curl -s -L 'https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.28-linux-amd64' -o /usr/local/bin/bosh && chmod +x /usr/local/bin/bosh
+
+echo "running tests using bosh v2"
 cmd=./pcf-repo/pcf
 
 $cmd alias test-name -n $OPSMAN_HOST -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD -o $CF_ORG -s $CF_SPACE
