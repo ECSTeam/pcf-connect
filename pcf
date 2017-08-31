@@ -88,7 +88,6 @@ function boshConnect () {
       # MINGW*)     machine=MinGw;;
       *)          machine="UNKNOWN:${unameOut}"
   esac
-  echo ${machine}
 
   if [[ "${machine}" == "Mac" ]]; then
     # WARNING: spacing critical here - do not indent 2nd line
@@ -172,7 +171,7 @@ function handleTargets() {
       echo -e "$alias\t\t$cleanHost"
     done
 	else
-		echo "No targets. Use 'pcf alias [options]' to create one."
+		echo "No targets. Use 'pcf alias' to create one."
 	fi
 }
 
