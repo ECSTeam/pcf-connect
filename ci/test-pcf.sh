@@ -31,7 +31,7 @@ $cmd targets
 # clean up
 
 rm -rf $HOME/.pcf
-gem uninstall bosh_cli -y
+yes | gem uninstall bosh_cli --silent
 
 curl -s -L 'https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.28-linux-amd64' -o /usr/local/bin/bosh && chmod +x /usr/local/bin/bosh
 
