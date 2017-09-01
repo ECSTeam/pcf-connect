@@ -28,7 +28,7 @@ $cmd alias test-name -n $OPSMAN_HOST -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD -o 
 $cmd target test-name
 $cmd targets
 
-# clean up
+# clean up bosh v1
 
 rm -rf $HOME/.pcf
 yes | gem uninstall bosh_cli --silent
