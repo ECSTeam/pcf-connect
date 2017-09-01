@@ -49,17 +49,17 @@ Displays a list of all available aliases that have been set up. The list reflect
 
 ### `pcf target`
 
-Display the current PCF environment target. Note that this command could reflect the wrong environment if you have run `bosh target`, `cf target`, or `uaac target` separately. When in doubt you should rerun `pcf target <alias>`.
+Display the current PCF environment target. Note that this command could reflect the wrong environment if you have run `bosh target` (v1), `bosh alias-env` (v2), `cf target`, or `uaac target` separately. When in doubt you should rerun `pcf target <alias>`.
 
 ### `pcf target <alias>`
 
 Target a specific PCF environment whose name is `<alias>`. This will perform the following tasks:
 
-- `cf login` to a specific org and space (system/system is the default)
+- `cf login` to org and space defined by `<alias>`
 - Obtain the ops manager director's root CA certificate and store it in `$HOME/.pcf/<alias>`
-- `bosh target` the Ops Manager director with `director` credentials
+- Log into the Ops Manager director with `director` credentials
 - Download all bosh deployment manifests and store them in `$HOME/.pcf/<alias>/deployments`
-- Set the current bosh deployment to the `cf` deployment
+- Set the current bosh deployment to the `cf` deployment (bosh v1 only)
 - Get the admin client token from the UAA server
 
 After running this command you are able to run appropriate `cf`, `bosh`, and `uaac` commands for that PCF environment.
