@@ -283,10 +283,13 @@ function handleAlias() {
 	currentJson=`cat $config_file`
 
   # check to see if alias already exists - if so we'll replace it
-  aliasIndex=`echo "$currentJson" | jq --arg n $name -r '.targets | map(.alias == $n) | index(true)'`
-  if [[ $aliasIndex == "null" ]]; then
-    # no alias exists - we'l add it to the end of existing aliases
-    aliasIndex=-1
+  if [[ $aliasIndex != 0 ]]; then
+    aliasIndex=`echo "$currentJson" | jq --arg n $name -r '.targets | map(.alias == $n) | index(true)'`
+
+    if [[ $aliasIndex == "null" ]]; then
+      # no alias exists - we'll add it to the end of existing aliases
+      aliasIndex=`echo "$currentJson" | jq -r '.targets | length'`
+    fi
   fi
 
   newJson=`echo "$currentJson" | jq --arg i $aliasIndex --arg n $name --arg h $host --arg u $user --arg p $password --arg o $org --arg s $space '.targets[$i | tonumber] |= . + { "alias": $n, "host": $h, "user": $u, "password": $p, "org": $o, "space": $s, "current": false }'`
