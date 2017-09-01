@@ -89,7 +89,7 @@ All state associated with this script is stored in `$HOME/.pcf`. The contents of
 
 - Don't store ops man admin password in plain text in `$HOME/.pcf/targets.json`
 - Vault support
-- Use bosh v2
+- Make `pcf target` and `pcf targets` more informative
 - More options
   - auto-target newly created alias
   - `cf login` as non-admin user
