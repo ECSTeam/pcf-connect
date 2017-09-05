@@ -37,7 +37,7 @@ If Ops manager host, user, or password is omitted you will be prompted to enter 
 
 This command will only go so far as validating the connection to Ops Manager. Connections to bosh director, cloud controller, and UAA occur when executing `pcf target <alias>`.
 
-Example:  `pcf alias -n 172.28.21.5 -u admin -p password -o system -s system`
+Example:  `pcf alias some-name -n 172.28.10.20 -u admin -p password -o system -s system`
 
 ## Targets
 
