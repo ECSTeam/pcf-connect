@@ -83,7 +83,7 @@ All state associated with this script is stored in `$HOME/.pcf`. The contents of
 - `targets.json`: list of all target aliases in json format
 - `<alias>` dirs: each <alias> has its own directory
 - `<alias>/root_ca_certificate`: root CA certificate for connecting to the bosh director
-- `<alias>/deployments`: contains manifests for all bosh deployments associated with the director making it easy to switch your deployment with `bosh deployment <manifest-file>`
+- `<alias>/deployments`: contains manifests for all bosh deployments associated with the director making it easy to switch your deployment with `bosh deployment <manifest-file>` (v1)
 
 # Future Directions
 
