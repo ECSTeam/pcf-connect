@@ -52,7 +52,12 @@ function curlit () {
 }
 
 function opsMgrConnect () {
-  ACCESS_TOKEN=`curl -s -k -d"username=$user&password=$password&client_id=$client&grant_type=password" -u "$client:" https://$host/uaa/oauth/token | jq -r '.access_token'`
+  ACCESS_TOKEN=`curl -s -k -d "username=$user&password=$password&client_id=$client&grant_type=password" -u "$client:" https://$host/uaa/oauth/token | jq -r '.access_token'`
+
+  if [[ $ACCESS_TOKEN == null ]]; then
+    echo "Error: invalid credentials. Cannot connect to $host."
+    exit 1
+  fi
 }
 
 function deployedProducts () {
