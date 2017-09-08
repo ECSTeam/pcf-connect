@@ -23,7 +23,7 @@ curl -s -L 'https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64' 
 cmd=./pcf-repo/pcf
 
 echo "test with bad credentials"
-result=`$cmd alias bad-creds -n $OPSMAN_HOST -u wronguser -p wrongpassword`
+result=`echo $($cmd alias bad-creds -n $OPSMAN_HOST -u wronguser -p wrongpassword)`
 if [[ ! $result == Error* ]]; then
   echo "Bad credentials did not fail properly"
   exit 1
