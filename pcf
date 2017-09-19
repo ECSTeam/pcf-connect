@@ -112,11 +112,11 @@ function boshConnect () {
 
   # target bosh director using proper bosh cli commands
   if [[ $boshVersion == 2.* ]]; then
-    bosh alias-env $alias -e $director_ip --ca-cert $alias_dir/root_ca_certificate
-    bosh -e $alias log-in <<EOF
+    bosh -e $director_ip log-in --ca-cert $alias_dir/root_ca_certificate <<EOF
 director
 $director_pw
 EOF
+    bosh alias-env $alias -e $director_ip --ca-cert $alias_dir/root_ca_certificate
   else
     bosh --ca-cert $alias_dir/root_ca_certificate target https://$director_ip:25555 <<EOF
 director

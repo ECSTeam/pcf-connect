@@ -37,7 +37,7 @@ If Ops manager host, user, or password is omitted you will be prompted to enter 
 
 This command will only go so far as validating the connection to Ops Manager. Connections to bosh director, cloud controller, and UAA occur when executing `pcf target <alias>`.
 
-Example:  `pcf alias some-name -n 172.28.10.20 -u admin -p password -o system -s system`
+Example:  `pcf alias -n 172.28.21.5 -u admin -p password -o system -s system`
 
 ## Targets
 
@@ -83,13 +83,14 @@ All state associated with this script is stored in `$HOME/.pcf`. The contents of
 - `targets.json`: list of all target aliases in json format
 - `<alias>` dirs: each <alias> has its own directory
 - `<alias>/root_ca_certificate`: root CA certificate for connecting to the bosh director
-- `<alias>/deployments`: contains manifests for all bosh deployments associated with the director making it easy to switch your deployment with `bosh deployment <manifest-file>` (v1)
+- `<alias>/deployments`: contains manifests for all bosh deployments associated with the director making it easy to switch your deployment with `bosh deployment <manifest-file>`
 
 # Future Directions
 
 - Don't store ops man admin password in plain text in `$HOME/.pcf/targets.json`
 - Vault support
 - Make `pcf target` and `pcf targets` more informative
+- Don't require `uaac`
 - More options
   - auto-target newly created alias
   - `cf login` as non-admin user
