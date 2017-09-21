@@ -6,7 +6,6 @@ cmd=./pcf-repo/pcf
 result=`$cmd help`
 if [[ ! $result == Error* ]]; then
   echo "'Bosh not installed' test failed"
-  exit 1
 fi
 
 # get "pcf" script required command line utilities - at some point just make a new docker image
@@ -19,7 +18,6 @@ gem install bosh_cli --silent --no-ri --no-rdoc
 result=`$cmd help`
 if [[ ! $result == Error* ]]; then
   echo "'cf not installed' test failed"
-  exit 1
 fi
 
 # CF
@@ -31,7 +29,6 @@ curl -s -L "https://cli.run.pivotal.io/stable?release=linux64-binary" | tar -zx 
 result=`$cmd help`
 if [[ ! $result == Error* ]]; then
   echo "'jq not installed' test failed"
-  exit 1
 fi
 
 # jq
@@ -47,7 +44,6 @@ echo "test with bad credentials"
 result=`echo $($cmd alias bad-creds -n $OPSMAN_HOST -u wronguser -p wrongpassword)`
 if [[ ! $result == Error* ]]; then
   echo "Bad credentials did not fail properly"
-  exit 1
 fi
 
 echo "running tests using bosh v1"
