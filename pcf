@@ -216,7 +216,10 @@ function handleTarget() {
 		cfLogin
     boshConnect
     boshDeployments
-    cfUAAConnect
+
+    if [ -n "$INSTALLED_UAAC" ]; then
+      cfUAAConnect
+    fi
 
     # update the 'current' flag
     newJson=`echo "$(cat $config_file)" | jq --arg n $alias '(.targets[] | select(.alias == $n)).current = true | (.targets[] | select(.alias != $n)).current = false'`
@@ -307,6 +310,29 @@ function handleAlias() {
 ###
 ### Run script
 ###
+
+INSTALLED_BOSH=`echo $(which bosh)`
+if [[ -z $INSTALLED_BOSH ]]; then
+  echo "Error: BOSH CLI not installed"
+  exit 1
+fi
+
+INSTALLED_CF=`echo $(which cf)`
+if [[ -z "$INSTALLED_CF" ]]; then
+  echo "Error: cf not installed"
+  exit 1
+fi
+
+INSTALLED_JQ=`echo $(which jq)`
+if [[ -z "$INSTALLED_JQ" ]]; then
+  echo "Error: jq not installed"
+  exit 1
+fi
+
+INSTALLED_UAAC=`echo $(which uaac)`
+if [[ -z "$INSTALLED_UAAC" ]]; then
+  echo "Info: uaac not installed. Continuing without it."
+fi
 
 boshVersion=`bosh -v | cut -d " " -f 2`
 

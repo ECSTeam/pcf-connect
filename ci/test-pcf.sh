@@ -1,27 +1,48 @@
 #!/bin/bash -e
 
+cmd=./pcf-repo/pcf
+
+# test bosh not installed
+result=`$cmd help`
+if [[ ! $result == Error* ]]; then
+  echo "'Bosh not installed' test failed"
+  exit 1
+fi
+
 # get "pcf" script required command line utilities - at some point just make a new docker image
 
 # BOSH
-echo "installing bosh"
+echo "installing bosh v1"
 gem install bosh_cli --silent --no-ri --no-rdoc
+
+# test cf not installed
+result=`$cmd help`
+if [[ ! $result == Error* ]]; then
+  echo "'cf not installed' test failed"
+  exit 1
+fi
 
 # CF
 echo "installing cf"
 gem install curl --silent
 curl -s -L "https://cli.run.pivotal.io/stable?release=linux64-binary" | tar -zx -C /usr/local/bin
 
-# UAAC
-echo "installing uaac"
-gem install cf-uaac --silent
+# test jq not installed
+result=`$cmd help`
+if [[ ! $result == Error* ]]; then
+  echo "'jq not installed' test failed"
+  exit 1
+fi
 
 # jq
 echo "installing jq"
 curl -s -L 'https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64' -o /usr/local/bin/jq && chmod +x /usr/local/bin/jq
 
-# Do something useful
-cmd=./pcf-repo/pcf
+# UAAC
+echo "installing uaac"
+gem install cf-uaac --silent
 
+# Do something useful
 echo "test with bad credentials"
 result=`echo $($cmd alias bad-creds -n $OPSMAN_HOST -u wronguser -p wrongpassword)`
 if [[ ! $result == Error* ]]; then
@@ -39,6 +60,8 @@ $cmd targets
 rm -rf $HOME/.pcf
 yes | gem uninstall bosh_cli --silent
 
+# install bosh v2
+echo "installing bosh v2"
 curl -s -L 'https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.28-linux-amd64' -o /usr/local/bin/bosh && chmod +x /usr/local/bin/bosh
 
 echo "running tests using bosh v2"
