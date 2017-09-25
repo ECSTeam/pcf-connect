@@ -1,4 +1,11 @@
 ---
+resource_types:
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+    tag: latest
+
 resources:
 - name: pcf-repo
   type: git
@@ -7,8 +14,19 @@ resources:
     branch: master
     access_token: {{github_token}}
 
+- name: slack
+  type: slack-notification
+  source:
+    url: {{slack_webhook_url}}
+
 jobs:
 - name: test-pcf
+  on_failure:
+    <<: *notify_slack
+  on_success:
+    put: slack
+    params:
+      text: "$BUILD_PIPELINE_NAME/$BUILD_JOB_NAME success: $ATC_EXTERNAL_URL/builds/$BUILD_ID"
   plan:
   - get: pcf-repo
     trigger: true
@@ -20,3 +38,8 @@ jobs:
       OPSMAN_PASSWORD: {{opsman_password}}
       CF_ORG: {{cf_org}}
       CF_SPACE: {{cf_space}}
+
+notify_slack: &notify_slack
+  put: slack
+  params:
+    text: "$BUILD_PIPELINE_NAME/$BUILD_JOB_NAME failed: $ATC_EXTERNAL_URL/builds/$BUILD_ID"
