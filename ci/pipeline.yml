@@ -42,4 +42,4 @@ jobs:
 notify_slack: &notify_slack
   put: slack
   params:
-    text: "`$BUILD_PIPELINE_NAME` build failed for job `$BUILD_JOB_NAME`: $ATC_EXTERNAL_URL/builds/$BUILD_ID"
+    text: "`$BUILD_PIPELINE_NAME` build failed for job '$BUILD_JOB_NAME': $ATC_EXTERNAL_URL/builds/$BUILD_ID"
