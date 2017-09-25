@@ -11,7 +11,7 @@ This script assumes that the following command line utilities are already instal
 - `jq`
 - `cf`
 - `bosh` (v1 or v2)
-- `uaac`
+- `uaac` (optional)
 
 # Installation
 
@@ -60,7 +60,7 @@ Target a specific PCF environment whose name is `<alias>`. This will perform the
 - Log into the Ops Manager director with `director` credentials
 - Download all bosh deployment manifests and store them in `$HOME/.pcf/<alias>/deployments`
 - Set the current bosh deployment to the `cf` deployment (bosh v1 only)
-- Get the admin client token from the UAA server
+- Get the admin client token from the UAA server (if `uaac` is installed)
 
 After running this command you are able to run appropriate `cf`, `bosh`, and `uaac` commands for that PCF environment.
 
@@ -70,7 +70,7 @@ NOTE:  `pcf` will use whatever version of the Bosh CLI `bosh -v` returns.
 
 ### `pcf help`
 
-You can always get help by typing `pcf help`. It will list out all the available commands you can use.
+You can get help by typing `pcf help`. It will list out all the available commands you can use.
 
 ### `pcf alias`
 
@@ -83,14 +83,13 @@ All state associated with this script is stored in `$HOME/.pcf`. The contents of
 - `targets.json`: list of all target aliases in json format
 - `<alias>` dirs: each <alias> has its own directory
 - `<alias>/root_ca_certificate`: root CA certificate for connecting to the bosh director
-- `<alias>/deployments`: contains manifests for all bosh deployments associated with the director making it easy to switch your deployment with `bosh deployment <manifest-file>`
+- `<alias>/deployments`: contains manifests for all bosh deployments associated with the director making it easy to switch your deployment with `bosh deployment <manifest-file>` (v1)
 
 # Future Directions
 
 - Don't store ops man admin password in plain text in `$HOME/.pcf/targets.json`
 - Vault support
 - Make `pcf target` and `pcf targets` more informative
-- Don't require `uaac`
 - More options
   - auto-target newly created alias
   - `cf login` as non-admin user
