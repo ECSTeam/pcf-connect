@@ -4,7 +4,7 @@ cmd=./pcf-repo/pcf
 
 # test bosh not installed
 echo "testing without bosh"
-result=`$cmd help`
+result=`echo $($cmd help)`
 if [[ ! $result == Error* ]]; then
   echo "'Bosh not installed' test failed"
 fi
