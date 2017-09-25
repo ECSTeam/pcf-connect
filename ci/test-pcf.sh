@@ -3,6 +3,7 @@
 cmd=./pcf-repo/pcf
 
 # test bosh not installed
+echo "testing without bosh"
 result=`$cmd help`
 if [[ ! $result == Error* ]]; then
   echo "'Bosh not installed' test failed"
@@ -15,6 +16,7 @@ echo "installing bosh v1"
 gem install bosh_cli --silent --no-ri --no-rdoc
 
 # test cf not installed
+echo "testing without cf"
 result=`$cmd help`
 if [[ ! $result == Error* ]]; then
   echo "'cf not installed' test failed"
@@ -26,6 +28,7 @@ gem install curl --silent
 curl -s -L "https://cli.run.pivotal.io/stable?release=linux64-binary" | tar -zx -C /usr/local/bin
 
 # test jq not installed
+echo "testing without jq"
 result=`$cmd help`
 if [[ ! $result == Error* ]]; then
   echo "'jq not installed' test failed"
