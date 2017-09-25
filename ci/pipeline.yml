@@ -26,7 +26,7 @@ jobs:
   on_success:
     put: slack
     params:
-      text: "$BUILD_PIPELINE_NAME/$BUILD_JOB_NAME success: $ATC_EXTERNAL_URL/builds/$BUILD_ID"
+      text: "`$BUILD_PIPELINE_NAME` build successful: $ATC_EXTERNAL_URL/builds/$BUILD_ID"
   plan:
   - get: pcf-repo
     trigger: true
@@ -42,4 +42,4 @@ jobs:
 notify_slack: &notify_slack
   put: slack
   params:
-    text: "$BUILD_PIPELINE_NAME/$BUILD_JOB_NAME failed: $ATC_EXTERNAL_URL/builds/$BUILD_ID"
+    text: "`$BUILD_PIPELINE_NAME` build failed for job `$BUILD_JOB_NAME`: $ATC_EXTERNAL_URL/builds/$BUILD_ID"
