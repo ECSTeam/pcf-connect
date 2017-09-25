@@ -17,7 +17,7 @@ gem install bosh_cli --silent --no-ri --no-rdoc
 
 # test cf not installed
 echo "testing without cf"
-result=`$cmd help`
+result=`echo $($cmd help)`
 if [[ ! $result == Error* ]]; then
   echo "'cf not installed' test failed"
 fi
@@ -29,7 +29,7 @@ curl -s -L "https://cli.run.pivotal.io/stable?release=linux64-binary" | tar -zx 
 
 # test jq not installed
 echo "testing without jq"
-result=`$cmd help`
+result=`echo $($cmd help)`
 if [[ ! $result == Error* ]]; then
   echo "'jq not installed' test failed"
 fi
