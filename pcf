@@ -112,13 +112,13 @@ function boshConnect () {
 
   # target bosh director using proper bosh cli commands
   if [[ $boshVersion == 2.* ]]; then
-    bosh -e $director_ip log-in --ca-cert $alias_dir/root_ca_certificate <<EOF
+    $BOSH_CMD -e $director_ip log-in --ca-cert $alias_dir/root_ca_certificate <<EOF
 director
 $director_pw
 EOF
-    bosh alias-env $alias -e $director_ip --ca-cert $alias_dir/root_ca_certificate
+    $BOSH_CMD alias-env $alias -e $director_ip --ca-cert $alias_dir/root_ca_certificate
   else
-    bosh --ca-cert $alias_dir/root_ca_certificate target https://$director_ip:25555 <<EOF
+    $BOSH_CMD --ca-cert $alias_dir/root_ca_certificate target https://$director_ip:25555 <<EOF
 director
 $director_pw
 EOF
@@ -134,9 +134,9 @@ function boshDeployments () {
     if [[ $i != p-bosh* ]]; then
       # this will overwrite!
       if [[ $boshVersion == 2.* ]]; then
-        bosh -e $alias -d $i man > $bosh_deployments_dir/$i
+        $BOSH_CMD -e $alias -d $i man > $bosh_deployments_dir/$i
       else
-        bosh download manifest $i > $bosh_deployments_dir/$i
+        $BOSH_CMD download manifest $i > $bosh_deployments_dir/$i
       fi
     fi
   done
@@ -144,7 +144,7 @@ function boshDeployments () {
   # target the cf deployment by default - cf_guid was retrieved earlier
   # only necessary using bosh v1
   if [[ $boshVersion != 2.* ]]; then
-    bosh deployment $bosh_deployments_dir/$cf_guid
+    $BOSH_CMD deployment $bosh_deployments_dir/$cf_guid
   fi
 }
 
@@ -311,7 +311,10 @@ function handleAlias() {
 ### Run script
 ###
 
-INSTALLED_BOSH=`echo $(which bosh)`
+# easy switching to "bosh2" if that's your preferred bosh cli
+BOSH_CMD=bosh
+
+INSTALLED_BOSH=`echo $(which $BOSH_CMD)`
 if [[ -z $INSTALLED_BOSH ]]; then
   echo "Error: BOSH CLI not installed"
   exit 1
@@ -334,7 +337,7 @@ if [[ -z "$INSTALLED_UAAC" ]]; then
   echo "Info: uaac not installed. Continuing without it."
 fi
 
-boshVersion=`bosh -v | cut -d " " -f 2`
+boshVersion=`$BOSH_CMD -v | cut -d " " -f 2`
 
 client=opsman
 config_file=$HOME/.pcf/targets.json
