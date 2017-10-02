@@ -307,6 +307,17 @@ function handleAlias() {
 	echo "Success! Use 'pcf target $name' to target this environment."
 }
 
+function validate_cli {
+  CLI=$1
+  set +e
+  CLI_EXISTS=$(which $CLI)
+  set -e
+  if [[ -z "$CLI_EXISTS" ]]; then
+    echo "Error: $CLI is not installed"
+    exit 1
+  fi
+}
+
 ###
 ### Run script
 ###
@@ -314,25 +325,11 @@ function handleAlias() {
 # easy switching to "bosh2" if that's your preferred bosh cli
 BOSH_CMD=bosh
 
-INSTALLED_BOSH=`echo $(which $BOSH_CMD)`
-if [[ -z $INSTALLED_BOSH ]]; then
-  echo "Error: BOSH CLI not installed"
-  exit 1
-fi
+validate_cli $BOSH_CMD
+validate_cli cf
+validate_cli jq
 
-INSTALLED_CF=`echo $(which cf)`
-if [[ -z "$INSTALLED_CF" ]]; then
-  echo "Error: cf not installed"
-  exit 1
-fi
-
-INSTALLED_JQ=`echo $(which jq)`
-if [[ -z "$INSTALLED_JQ" ]]; then
-  echo "Error: jq not installed"
-  exit 1
-fi
-
-INSTALLED_UAAC=`echo $(which uaac)`
+INSTALLED_UAAC=$(which uaac)
 if [[ -z "$INSTALLED_UAAC" ]]; then
   echo "Info: uaac not installed. Continuing without it."
 fi
