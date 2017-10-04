@@ -23,7 +23,7 @@ Place the `pcf` script file somewhere on your `$PATH` and you're good to go.
 
 ## Alias
 
-### `pcf alias [options]`
+### `pcf alias <alias> [options]`
 
 Create an alias for a specific PCF environment. The following options are available:
 
