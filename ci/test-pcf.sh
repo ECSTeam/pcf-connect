@@ -79,7 +79,7 @@ $cmd targets
 # test with differently named 'bosh' command
 echo "Running test: custom 'bosh' command name"
 mv /usr/local/bin/bosh /usr/local/bin/bosh2
-BOSH_CMD=bosh2
+export BOSH_CMD=bosh2
 $cmd targets
 
 echo "SUCCESS!"
