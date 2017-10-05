@@ -4,7 +4,7 @@ cmd=./pcf-repo/pcf
 
 # test bosh not installed
 echo -n "Running test: bosh missing "
-result=$($cmd help)
+result=`$cmd help`
 if [[ ! $result == Error* ]]; then
   echo "(FAILED)"
 fi
@@ -19,7 +19,7 @@ echo "done!"
 
 # test cf not installed
 echo -n "Running test: cf missing "
-result=$($cmd help)
+result=`$cmd help`
 if [[ ! $result == Error* ]]; then
   echo "(FAILED)"
 fi
@@ -33,7 +33,7 @@ echo "done!"
 
 # test jq not installed
 echo -n "Running test: jq missing "
-result=$($cmd help)
+result=`$cmd help`
 if [[ ! $result == Error* ]]; then
   echo "(FAILED)"
 fi
@@ -51,7 +51,7 @@ echo "done!"
 
 # Do something useful
 echo -n "Running test: bad credentials "
-result=$($cmd alias bad-creds -n $OPSMAN_HOST -u wronguser -p wrongpassword)
+result=`$cmd alias bad-creds -n $OPSMAN_HOST -u wronguser -p wrongpassword`
 if [[ ! $result == Error* ]]; then
   echo "(FAILED)"
 fi
