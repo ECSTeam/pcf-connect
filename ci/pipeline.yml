@@ -13,6 +13,10 @@ resources:
     uri: https://github.com/ECSTeam/pcf-connect
     branch: master
     access_token: {{github_token}}
+    ignore_paths:
+    - README.md
+    - .gitignore
+    - ci/pipeline.yml
 
 - name: slack
   type: slack-notification

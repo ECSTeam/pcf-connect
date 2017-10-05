@@ -6,11 +6,11 @@ This script should function on both Mac OS X and Linux environments.
 
 # Prerequisites
 
-This script assumes that the following command line utilities are already installed:
+This script requires the following command line utilities:
 
 - `jq`
 - `cf`
-- `bosh` (v1 or v2)
+- `bosh` (optionally set `$BOSH_CMD` to an alternative command)
 - `uaac` (optional)
 
 # Installation
