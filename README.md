@@ -64,7 +64,7 @@ Target a specific PCF environment whose name is `<alias>`. This will perform the
 
 After running this command you are able to run appropriate `cf`, `bosh`, and `uaac` commands for that PCF environment.
 
-NOTE:  `pcf` will use whatever version of the Bosh CLI `bosh -v` returns. If you would like to change this to use a command other than `bosh` (e.g. `bosh2`) you can modify the line `BOSH_CMD=bosh` of the `pcf` script to set the command to use.
+NOTE:  `pcf` will use whatever version of the Bosh CLI `bosh -v` returns. If you would like to change this to use a command other than `bosh` (e.g. `bosh2`) you can set an environment variable, `BOSH_CMD`, to your custom name.
 
 ## Help
 

@@ -323,7 +323,9 @@ function validate_cli {
 ###
 
 # easy switching to "bosh2" if that's your preferred bosh cli
-BOSH_CMD=bosh
+if [[ -z $BOSH_CMD ]]; then
+  BOSH_CMD=bosh
+fi
 
 validate_cli $BOSH_CMD
 validate_cli cf
