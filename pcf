@@ -112,6 +112,8 @@ function boshConnect () {
 
   # target bosh director using proper bosh cli commands
   if [[ $boshVersion == 2.* ]]; then
+    # TODO: LOGOUT FIRST?
+
     $BOSH_CMD -e $director_ip log-in --ca-cert $alias_dir/root_ca_certificate <<EOF
 director
 $director_pw
@@ -166,15 +168,17 @@ function handleTargets() {
 
     echo "Available environments. Use 'pcf target <alias>' to target an environment."
     echo ""
-    echo -e "Alias\t\tOps Mgr Host"
-    echo -e "-----\t\t------------"
+
     for i in $aliases; do
-      # alias=$i
-      alias=`echo $i | sed -e 's/^"//' -e 's/"$//'`
-      host=`echo "$(cat $config_file)" | jq --arg n $alias '.targets[] | select(.alias == $n) | .host'`
-      cleanHost=`echo $host | sed -e 's/^"//' -e 's/"$//'`
-      echo -e "$alias\t\t$cleanHost"
+      alias=$(stripQuotes $i)
+      foundAlias=$(findAlias "$alias")
+      host=$(stripQuotes $(echo "$foundAlias" | jq '.host'))
+      org=$(stripQuotes $(echo "$foundAlias" | jq '.org'))
+      space=$(stripQuotes $(echo "$foundAlias" | jq '.space'))
+
+      lines=$(echo -e "$lines\n$alias $host $org $space")
     done
+    (printf "ALIAS OM_HOST ORG SPACE\n%s\n" "$lines") | column -t
 	else
 		echo "No targets. Use 'pcf alias' to create one."
 	fi
@@ -316,6 +320,14 @@ function validate_cli {
     echo "Error: $CLI is not installed"
     exit 1
   fi
+}
+
+function findAlias() {
+  echo "$(cat $HOME/.pcf/targets.json)" | jq --arg n $1 '.targets[] | select(.alias == $n)'
+}
+
+function stripQuotes() {
+  echo $1 | sed -e 's/^"//' -e 's/"$//'
 }
 
 ###

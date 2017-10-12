@@ -6,9 +6,9 @@ This script should function on both Mac OS X and Linux environments.
 
 # Prerequisites
 
-This script requires the following command line utilities:
+This script uses the following command line utilities:
 
-- `jq`
+- `jq` v1.4+
 - `cf`
 - `bosh` (optionally set `$BOSH_CMD` to an alternative command)
 - `uaac` (optional)
@@ -43,7 +43,7 @@ Example:  `pcf alias dev -n 172.28.21.5 -u admin -p password -o system -s system
 
 ### `pcf targets`
 
-Displays a list of all available aliases that have been set up. The list reflect the contents of the `$HOME/.pcf/targets.json` file.
+Displays a list of all available aliases that have been set up. The list reflects the contents of the `$HOME/.pcf/targets.json` file.
 
 ## Target
 
