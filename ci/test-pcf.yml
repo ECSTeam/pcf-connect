@@ -5,6 +5,7 @@ image_resource:
   type: docker-image
   source:
     repository: ruby
+    tag: 2.4.2-alpine3.6
 
 inputs:
   - name: pcf-repo
