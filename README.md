@@ -8,7 +8,8 @@ This script should function on both Mac OS X and Linux environments.
 
 This script uses the following command line utilities:
 
-- `jq` v1.4+
+- `jq` v1.4+ to parse JSON output from Ops Manager REST API
+- `column` to pretty-print output from `pcf targets`
 - `cf`
 - `bosh` (optionally set `$BOSH_CMD` to an alternative command)
 - `uaac` (optional)
@@ -44,6 +45,18 @@ Example:  `pcf alias dev -n 172.28.21.5 -u admin -p password -o system -s system
 ### `pcf targets`
 
 Displays a list of all available aliases that have been set up. The list reflects the contents of the `$HOME/.pcf/targets.json` file.
+
+Example output:
+
+```
+Available environments. Use 'pcf target <alias>' to target an environment.
+
+ALIAS  OM_HOST      ORG     SPACE
+lab2   172.28.21.5  system  system
+lab3   172.28.31.5  system  system
+lab4   172.28.41.5  system  system
+lab7   172.28.71.5  system  system
+```
 
 ## Target
 

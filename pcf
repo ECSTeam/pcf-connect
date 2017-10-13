@@ -178,7 +178,15 @@ function handleTargets() {
 
       lines=$(echo -e "$lines\n$alias $host $org $space")
     done
-    (printf "ALIAS OM_HOST ORG SPACE\n%s\n" "$lines") | column -t
+
+    INSTALLED_COLUMN=$(which column)
+    if [[ -n INSTALLED_COLUMN ]]; then
+      (printf "ALIAS OM_HOST ORG SPACE\n%s\n" "$lines") | column -t
+    else
+      echo "Info: 'column' not installed. Can't format output."
+      echo ""
+      (printf "ALIAS OM_HOST ORG SPACE\n%s\n" "$lines")
+    fi
 	else
 		echo "No targets. Use 'pcf alias' to create one."
 	fi
