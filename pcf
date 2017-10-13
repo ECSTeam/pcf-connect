@@ -43,11 +43,11 @@ function curlit () {
 	opsman_endpoint="https://$host/$1"
 	# echo "Connecting to $opsman_endpoint"
   curl_response=`curl -k -s $opsman_endpoint -X GET -H "Authorization: Bearer $ACCESS_TOKEN"`
-  if [ -z "$curl_response" ]; then
+  if [[ -z "$curl_response" ]]; then
     echo "No reponse from curl: $1."
     exit 1
   else
-		echo $curl_response
+		echo "$curl_response"
   fi
 }
 
@@ -66,7 +66,7 @@ function deployedProducts () {
 
 # requires $org and $space already set
 function cfLogin () {
-  cf_guid=`echo $products | jq -r '.[] | select(.type == "cf") | .guid'`
+  cf_guid=`echo "$products" | jq -r '.[] | select(.type == "cf") | .guid'`
   cf_creds=`curlit api/v0/deployed/products/$cf_guid/credentials/.uaa.admin_credentials`
 	cf_user=`echo $cf_creds | jq -r '.credential.value.identity'`
 	cf_pass=`echo $cf_creds | jq -r '.credential.value.password'`
@@ -106,7 +106,7 @@ function boshConnect () {
 
   # remove double-quotes
 
-  boshGuid=`echo $products | jq -r '.[] | select(.type == "p-bosh") | .guid'`
+  boshGuid=`echo "$products" | jq -r '.[] | select(.type == "p-bosh") | .guid'`
   director_ip=`curlit api/v0/deployed/products/$boshGuid/static_ips | jq -r '.[] | .ips[0]'`
   director_pw=`curlit api/v0/deployed/director/credentials/director_credentials | jq -r '.credential.value.password'`
 
@@ -131,7 +131,7 @@ function boshDeployments () {
   bosh_deployments_dir=$alias_dir/deployments
   mkdir -p $bosh_deployments_dir
 
-  guids=`echo $products | jq -r '.[] | .guid'`
+  guids=`echo "$products" | jq -r '.[] | .guid'`
   for i in $guids; do
     if [[ $i != p-bosh* ]]; then
       # this will overwrite!
