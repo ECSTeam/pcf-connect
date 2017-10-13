@@ -2,6 +2,9 @@
 
 cmd=./pcf-repo/pcf
 
+# install 'column' cli to /usr/bin
+apt -y update && apt -y install bsdmainutils
+
 # test bosh not installed
 echo -n "Running test: bosh missing "
 result=`echo $($cmd help)`
