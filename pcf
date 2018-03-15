@@ -1,9 +1,10 @@
-#!/bin/bash -e
+#!/bin/bash
 
 # This script will connect to a specific PCF environment given only the
 # ops man host, username, and password.
 #
 # Authors:  Winston Rast, Michael Menges
+
 
 function usage() {
 cat <<EOF
@@ -321,9 +322,9 @@ function handleAlias() {
 
 function validate_cli {
   CLI=$1
-  set +e
+
   CLI_EXISTS=$(which $CLI)
-  set -e
+
   if [[ -z "$CLI_EXISTS" ]]; then
     echo "Error: $CLI is not installed"
     exit 1
