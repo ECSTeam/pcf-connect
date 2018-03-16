@@ -1,10 +1,40 @@
-#!/bin/bash
+#!/bin/bash -eE
 
 # This script will connect to a specific PCF environment given only the
 # ops man host, username, and password.
 #
 # Authors:  Winston Rast, Michael Menges
 
+set -o errtrace
+
+function setTraps()
+{
+  set -eE
+  trap 'error ${LINENO}' ERR
+}
+
+function clearTraps()
+{
+  set +eE
+  trap - ERR
+}
+
+tempfiles=( )
+cleanup() {
+  rm -f "${tempfiles[@]}"
+}
+
+error() {
+  local parent_lineno="$1"
+  local message="$2"
+  local code="${3:-1}"
+  if [[ -n "$message" ]] ; then
+    echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
+  else
+    echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
+  fi
+  exit "${code}"
+}
 
 function usage() {
 cat <<EOF
@@ -322,9 +352,9 @@ function handleAlias() {
 
 function validate_cli {
   CLI=$1
-
+  set +eE
   CLI_EXISTS=$(which $CLI)
-
+  set -eE
   if [[ -z "$CLI_EXISTS" ]]; then
     echo "Error: $CLI is not installed"
     exit 1
@@ -342,6 +372,8 @@ function stripQuotes() {
 ###
 ### Run script
 ###
+trap cleanup 0
+setTraps
 
 # easy switching to "bosh2" if that's your preferred bosh cli
 if [[ -z $BOSH_CMD ]]; then
@@ -352,10 +384,14 @@ validate_cli $BOSH_CMD
 validate_cli cf
 validate_cli jq
 
+clearTraps
+
 INSTALLED_UAAC=$(which uaac)
 if [[ -z "$INSTALLED_UAAC" ]]; then
   echo "Info: uaac not installed. Continuing without it."
 fi
+setTraps
+
 
 boshVersion=`$BOSH_CMD -v | cut -d " " -f 2`
 
